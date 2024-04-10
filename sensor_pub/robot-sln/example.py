@@ -26,6 +26,7 @@ while True:
 
     byte_data = sock.recv(10000)
     data =  np.frombuffer(byte_data)
+    print(data.dtype)
 # Clean up the connection
 print('closing socket')
 sock.close()

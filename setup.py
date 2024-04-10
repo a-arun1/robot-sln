@@ -14,9 +14,9 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='aarun',
-    maintainer_email='aarun@eng.ucsd.edu',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer_email='aarun@ucsd.edu',
+    description='Reads 6DoF sensor values from test sensor and publishes the information in a dedicated topic',
+    license='MIT license',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
