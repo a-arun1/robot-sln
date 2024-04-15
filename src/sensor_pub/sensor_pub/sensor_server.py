@@ -13,7 +13,7 @@ import numpy as np
 from .third_party.sensor import Sensor
 
 class SensorService(Node):
-
+    """Class to create a service to get sensor data from the sensors."""
     def __init__(self):
         super().__init__("sensor_service")
         self.ip_address1 = "127.0.0.3"
@@ -53,6 +53,7 @@ class SensorService(Node):
         self.sock2.connect(server_address2)
 
     def get_sensor1_data_callback(self, request, response):
+        """Callback function for the service to get sensor data from sensor 1."""
         # Send the number of samples that is needed from the sensor
         num_samples = request.num_samples
         message_string = str(num_samples)
@@ -68,6 +69,7 @@ class SensorService(Node):
         return response
 
     def get_sensor2_data_callback(self, request, response):
+        """Callback function for the service to get sensor data from sensor 2."""
         # Send the number of samples that is needed from the sensor
         num_samples = request.num_samples
         message_string = str(num_samples)
@@ -82,6 +84,7 @@ class SensorService(Node):
 
 
 def main(args=None):
+    """Main function to create the sensor service node."""
     rclpy.init(args=args)
     sensor_service = SensorService()
 

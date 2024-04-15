@@ -2,4 +2,4 @@ build
 log
 install
 __pycache__/
-
+.idea/
