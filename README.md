@@ -25,13 +25,12 @@ The service server defines two simulated sensors at IP addresses 127.0.0.3 and 1
 
 ### Branch `faster`
 
-There are two branches provided as part of this solution: [master]() and [faster](). The master branch contains a naive sampling strategy wherein 1 sample for each sensor is read at a time. However, when the server is serving two sensor clients simultaneously, the turn-around time for the sampling is ~8 ms. This means for a many samples, "stale" samples are published, as apparent by the ROS warnings. 
+There are two branches provided as part of this solution: [master](https://github.com/a-arun1/robot-sln/tree/master) and [faster](https://github.com/a-arun1/robot-sln/tree/faster). The master branch contains a naive sampling strategy wherein 1 sample for each sensor is read at a time. However, when the server is serving two sensor clients simultaneously, the turn-around time for the sampling is ~8 ms. This means for a many samples, "stale" samples are published, as apparent by the ROS warnings. 
 
-Instead of this naive implementation, in branch [faster](), we sample a larger number of sensor readings at a time. The main thought process is that there is a ~3 ms start-up cost (which includes sensor delay, additional uniform delay and processing delay) to access sensor data, after which there's linear cost of ~0.5 ms (sampling delay). Furthermore, if two clients are served simultaneously, then these costs double. Given these numbers, we'd like the average sample access time to be ~2 ms to reduce the number of stale data we repeat. In other words:
+Instead of this naive implementation, in branch [faster](https://github.com/a-arun1/robot-sln/tree/faster), we sample a larger number of sensor readings at a time. The main thought process is that there is a ~3 ms start-up cost (which includes sensor delay, additional uniform delay and processing delay) to access sensor data, after which there's linear cost of ~0.5 ms (sampling delay). Furthermore, if two clients are served simultaneously, then these costs double. Given these numbers, we'd like the average sample access time to be ~2 ms to reduce the number of stale data we repeat. In other words:
 
 (2 (0.5 x + 3)) / x = 2
 ==> x = 6,
 
 where x is th number of samples extracted. These samples are stored in a numpy array and for each publisher callback the next row of data is reported. When a new sample is read, the row index is reset to 0 and new data is reported. This reduces stale data warnings however at the cost of reporting slightly older data. 
 
-  
