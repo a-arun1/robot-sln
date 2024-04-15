@@ -23,6 +23,7 @@ class SensorClient(Node):
         self.req = GetSensorData.Request()
         self.response = None
         self.new_data = False
+        self.topic_name = topic_name
 
         # create a publisher to publish the sensor data
         self.pub = self.create_publisher(SensorData, "/"+topic_name, 10)
@@ -58,7 +59,7 @@ class SensorClient(Node):
             self.new_data = False # the published data is now stale
         else: 
             self.get_logger().info(
-                    'Sensor data not yet ready to be published')
+                    f"Sensor data for {self.topic_name} topic not yet ready to be published")
 
 
 def main(args=None):
