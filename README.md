@@ -12,10 +12,13 @@ We need to create a separate package for the sensor interfaces as new message an
 
 ### Sensor Pub:
 
-`setup.py` configures the node executable names for the server and the client. They can be conveniently run by calling the following calls: 
+`setup.py` configures the node executable names for the server and the two sensor clients. They can be conveniently run by calling the following calls in separate terminals: 
 
 `ros2 run sensor_pub service`
 
-`ros2 run sensor_pub client`
+`ros2 run sensor_pub client1`
+
+`ros2 run sensor_pub client2`
+
 
 The service server defines two simulated sensors at IP addresses 127.0.0.3 and 127.0.0.4, and socket 10000. Both sensors have a random delay between 1-2 ms. Two separate callbacks are defined for two differnt services. The service client sets up a caller for each of these services and publishes the returned data to two topics: `/sensor1` and `/sensor2` at a rate of 500 Hz. 

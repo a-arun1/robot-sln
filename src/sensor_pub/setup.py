@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
         'service = sensor_pub.sensor_server:main',
-        'client = sensor_pub.sensor_cli:main',
+        'client1 = sensor_pub.sensor_cli:main1',
+        'client2 = sensor_pub.sensor_cli:main2',
         ],
     },
 )

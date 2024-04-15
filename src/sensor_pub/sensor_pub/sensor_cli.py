@@ -9,6 +9,7 @@ from sensor_interfaces.msg import SensorData
 import rclpy
 from rclpy.node import Node
 import time
+from multiprocessing import Process
 
 PERIOD = 1/500 # period at which topic should be published
 NUM_SAMPLES = 1
@@ -22,7 +23,7 @@ class SensorClient(Node):
             self.get_logger().info('service not available, waiting again...')
         self.req = GetSensorData.Request()
         self.response = None
-        self.new_data = False
+        self.packet_num = False
         self.topic_name = topic_name
 
         # create a publisher to publish the sensor data
@@ -47,7 +48,7 @@ class SensorClient(Node):
         self.get_logger().info(f"Service call completed in {time.time() - tic} s")
 
     def publish_data(self):
-        if self.response is not None and self.new_data:
+        if self.response is not None:
             if not self.new_data:
                 self.get_logger().warn(
                     'Publishing stale data')
@@ -62,7 +63,7 @@ class SensorClient(Node):
                     f"Sensor data for {self.topic_name} topic not yet ready to be published")
 
 
-def main(args=None):
+def main1(args=None):
     rclpy.init(args=args)
 
     # create a client to query the first sensor service
@@ -70,22 +71,28 @@ def main(args=None):
     service_name1 = "get_sensor1_data"
     node1 = SensorClient(topic_name1, service_name1)
 
+    try: 
+        while rclpy.ok():
+            node1.send_request(NUM_SAMPLES)
+    except KeyboardInterrupt:
+        pass
+
+    rclpy.shutdown()
+
+def main2(args=None):
+    rclpy.init(args=args)
+
     # create another client
     topic_name2 = "sensor2"
     service_name2 = "get_sensor2_data"
     node2 = SensorClient(topic_name2, service_name2)
 
-    # request data from the services
-    try:
-        while rclpy.ok():  # Run forever until interrupted
-            node1.send_request(NUM_SAMPLES)
+    try: 
+        while rclpy.ok():
             node2.send_request(NUM_SAMPLES)
-
     except KeyboardInterrupt:
         pass
 
-    node1.destroy_node()
-    node2.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
