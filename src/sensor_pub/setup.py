@@ -5,7 +5,7 @@ package_name = 'sensor_pub'
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name],
+    packages=[package_name, f"{package_name}/third_party"],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),

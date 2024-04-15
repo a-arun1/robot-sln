@@ -5,12 +5,12 @@ from rclpy.node import Node
 from threading import Thread
 import socket
 import sys
-sys.path.append("/home/aarun/Research/current_projects/machina_hw/src/sensor_pub")
+# sys.path.append("/home/aarun/Research/current_projects/machina_hw/src/sensor_pub")
 # TODO remove this and automate it
 
 import numpy as np
 
-from third_party.sensor import Sensor
+from .third_party.sensor import Sensor
 
 class SensorService(Node):
 

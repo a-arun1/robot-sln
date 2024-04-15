@@ -1,7 +1,7 @@
 import sys
 
 import sys
-sys.path.append("/home/aarun/Research/current_projects/machina_hw/src/sensor_pub")
+# sys.path.append("/home/aarun/Research/current_projects/machina_hw/src/sensor_pub")
 
 
 from sensor_interfaces.srv import GetSensorData
