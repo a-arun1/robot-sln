@@ -1,5 +1,0 @@
-int num_samples
-
----
-
-float64[] sensor_data
