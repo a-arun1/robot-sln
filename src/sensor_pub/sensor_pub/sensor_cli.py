@@ -1,9 +1,3 @@
-import sys
-
-import sys
-# sys.path.append("/home/aarun/Research/current_projects/machina_hw/src/sensor_pub")
-
-
 from sensor_interfaces.srv import GetSensorData
 from sensor_interfaces.msg import SensorData
 import rclpy
@@ -15,7 +9,7 @@ PERIOD = 1/500 # period at which topic should be published
 NUM_SAMPLES = 1
 
 class SensorClient(Node):
-
+    """A class to create a client node to query the sensor data service"""
     def __init__(self, topic_name, service_name):
         super().__init__("client_"+service_name)
         self.cli = self.create_client(GetSensorData, service_name)
@@ -31,6 +25,7 @@ class SensorClient(Node):
         self.timer = self.create_timer(PERIOD, self.publish_data)
 
     def send_request(self, num_samples):
+        """Send a request to the sensor service to get the sensor data"""
         tic = time.time()
         self.req.num_samples = num_samples
         future = self.cli.call_async(self.req)
@@ -48,6 +43,7 @@ class SensorClient(Node):
         self.get_logger().info(f"Service call completed in {time.time() - tic} s")
 
     def publish_data(self):
+        """Publish the sensor data to the topic"""
         if self.response is not None:
             if not self.new_data:
                 self.get_logger().warn(
@@ -64,6 +60,7 @@ class SensorClient(Node):
 
 
 def main1(args=None):
+    """Main function to create a node and run the sensor 1 client"""
     rclpy.init(args=args)
 
     # create a client to query the first sensor service
@@ -80,6 +77,7 @@ def main1(args=None):
     rclpy.shutdown()
 
 def main2(args=None):
+    """Main function to create a node and run the sensor 2 client"""
     rclpy.init(args=args)
 
     # create another client
@@ -96,4 +94,4 @@ def main2(args=None):
     rclpy.shutdown()
 
 if __name__ == '__main__':
-    main()
+    main1()
