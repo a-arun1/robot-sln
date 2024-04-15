@@ -10,9 +10,10 @@ import rclpy
 from rclpy.node import Node
 import time
 from multiprocessing import Process
+import numpy as np
 
 PERIOD = 1/500 # period at which topic should be published
-NUM_SAMPLES = 1
+NUM_SAMPLES = 6
 
 class SensorClient(Node):
 
@@ -23,7 +24,7 @@ class SensorClient(Node):
             self.get_logger().info('service not available, waiting again...')
         self.req = GetSensorData.Request()
         self.response = None
-        self.packet_num = False
+        self.packet_num = None
         self.topic_name = topic_name
 
         # create a publisher to publish the sensor data
@@ -40,7 +41,8 @@ class SensorClient(Node):
             if future.done():
                 try:
                     self.response = future.result()
-                    self.new_data = True
+                    self.response = np.array(self.response.sensor_data.tolist()).reshape((NUM_SAMPLES, -1))
+                    self.packet_num = 0
                     break
                 except Exception as e:
                     self.get_logger().error('Service call failed %r' % (e,))
@@ -49,15 +51,15 @@ class SensorClient(Node):
 
     def publish_data(self):
         if self.response is not None:
-            if not self.new_data:
+            if self.packet_num == NUM_SAMPLES:
                 self.get_logger().warn(
-                    'Publishing stale data')
+                    'Publishing stale data') # republish the last seen packet
+            else: 
+                self.packet_num += 1 # increment packet id upto a max of NUM_SAMPLES - 1
 
             msg = SensorData()
-            msg.data = self.response.sensor_data.tolist()
+            msg.data = list(self.response[self.packet_num-1])
             self.pub.publish(msg)
-
-            self.new_data = False # the published data is now stale
         else: 
             self.get_logger().info(
                     f"Sensor data for {self.topic_name} topic not yet ready to be published")
