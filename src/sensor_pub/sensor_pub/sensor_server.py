@@ -14,9 +14,9 @@ from third_party.sensor import Sensor
 
 class SensorService(Node):
 
-    def __init__(self, ip_address):
-        super().__init__('sensor_service')
-        self.srv = self.create_service(GetSensorData, 'get_sensor_data', self.get_sensor_data_callback)
+    def __init__(self, ip_address, service_name):
+        super().__init__("node_"+service_name)
+        self.srv = self.create_service(GetSensorData, service_name, self.get_sensor_data_callback)
         self.ip_address = ip_address
 
         # Start the sensor in a separate thread
@@ -53,10 +53,22 @@ class SensorService(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    ip_address = '127.0.0.3'
-    sensor_service = SensorService(ip_address)
+    ip_address1 = '127.0.0.3'
+    service_name1 = "get_sensor1_data"
+    sensor_service1 = SensorService(ip_address1, service_name1)
 
-    rclpy.spin(sensor_service)
+    ip_address2 = '127.0.0.4'
+    service_name2 = "get_sensor2_data"
+    sensor_service2 = SensorService(ip_address2, service_name2)
+    
+    try:
+        rclpy.spin(sensor_service1)
+        rclpy.spin(sensor_service2)
+    except KeyboardInterrupt:
+        pass
+
+    sensor_service1.destroy_node()
+    sensor_service2.destroy_node()
 
     rclpy.shutdown()
 

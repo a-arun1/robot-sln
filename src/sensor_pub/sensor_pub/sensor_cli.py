@@ -15,9 +15,9 @@ NUM_SAMPLES = 1
 
 class SensorClient(Node):
 
-    def __init__(self, topic_name):
-        super().__init__('sensor_client')
-        self.cli = self.create_client(GetSensorData, 'get_sensor_data')
+    def __init__(self, topic_name, service_name):
+        super().__init__("client_"+service_name)
+        self.cli = self.create_client(GetSensorData, service_name)
         while not self.cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
         self.req = GetSensorData.Request()
@@ -63,15 +63,28 @@ class SensorClient(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    topic_name = "sensor1"
-    node = SensorClient(topic_name)
+
+    # create a client to query the first sensor service
+    topic_name1 = "sensor1"
+    service_name1 = "get_sensor1_data"
+    node1 = SensorClient(topic_name1, service_name1)
+
+    # create another client
+    topic_name2 = "sensor2"
+    service_name2 = "get_sensor2_data"
+    node2 = SensorClient(topic_name2, service_name2)
+
+    # request data from the services
     try:
         while rclpy.ok():  # Run forever until interrupted
-            node.send_request(NUM_SAMPLES)
+            node1.send_request(NUM_SAMPLES)
+            node2.send_request(NUM_SAMPLES)
+
     except KeyboardInterrupt:
         pass
 
-    node.destroy_node()
+    node1.destroy_node()
+    node2.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
